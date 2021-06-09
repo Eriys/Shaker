@@ -17,5 +17,5 @@ Several options exists :
 **Warning** : For the moment, the program is not really fast, because I need to implement parallelizing features. So take a coffee (or two) if you're running a lot of providers at the same time. 
 
 Future features : 
--> parallelizing
+-> parallelizing\n
 -> postcode
