@@ -2,11 +2,10 @@
 import requests
 import sys
 from optparse import OptionParser
-
 from datetime import datetime
-
 import itertools
 import os
+import tqdm
 
 def inputs(options):
     firstname = str(input("Target Firstname: "))
@@ -36,7 +35,6 @@ def inputs(options):
     return (values_combo)
 
 def allItermail(names):
-    print(" === STARTING ITERATION ===")
     combiv = []
     for names in names:
         if names != "":
@@ -70,12 +68,9 @@ def allItermail(names):
     final_combi = list(set(filter(lambda x: len(x) > 4, final_combi)))
     final_combi = list(set(filter(lambda x: x[0] != '-' and x[0] != '_' and x[0] != '.', final_combi)))
     final_combi = list(set(filter(lambda x: x[-1] != '-' and x[-1] != '_' and x[-1] !='.', final_combi)))
-
-    print(" === EXITING ITERATION ===")
     return final_combi
 
 def simpleItermail(names):
-    print(" === STARTING ITERATION ===")
     combiv = []
     final_iter = list()
     if names[0] != "":
@@ -110,7 +105,6 @@ def simpleItermail(names):
     return (combis)
 
 def create_mail(base_mails, number):
-    print(" === STARTING CREATION ===")
     probable_mail = list()
     for base in base_mails:
         probable_mail.append(base)
@@ -121,8 +115,7 @@ def create_mail(base_mails, number):
     return (probable_mail)
 
 def check_mail(mail, final_mail):
-    print(" === START CHECKING ===")
-    for m in mail:
+    for m in tdqm(mail):
         url = f'https://mail.google.com/mail/gxlu?email={m}'
         try:
             response = requests.get(url)
