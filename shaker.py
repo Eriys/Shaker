@@ -1,11 +1,16 @@
 
-import requests
+import httpx
+import trio
+
 import sys
 from optparse import OptionParser
 from datetime import datetime
 import itertools
 import os
+
+import time
 from tqdm import tqdm
+
 
 def inputs(options):
     firstname = str(input("Target Firstname: "))
@@ -71,6 +76,7 @@ def allItermail(names):
     return final_combi
 
 def simpleItermail(names):
+
     combiv = []
     final_iter = list()
     if names[0] != "":
@@ -114,16 +120,30 @@ def create_mail(base_mails, number):
             x += 1
     return (probable_mail)
 
-def check_mail(mail, final_mail):
-    for m in tqdm(mail):
-        url = f'https://mail.google.com/mail/gxlu?email={m}'
-        try:
-            response = requests.get(url)
-            if 'set-cookie' in response.headers:
-                final_mail.append(f'{m}')
-                print(f"Valid : {m}")
-        except:
-            pass
+async def valid_mail(mail, client, final_mail):
+    url = f'https://mail.google.com/mail/gxlu?email={mail}'
+    try:
+        response = await client.get(url)
+        if 'set-cookie' in response.headers:
+            final_mail.append(f'{mail}')
+            print(f'Valid mail : {mail}')
+    except:
+        pass
+    return final_mail
+
+async def launch_check(mail, client, final_mail):
+    await valid_mail(mail, client, final_mail)
+
+async def check_mail(mail, final_mail):
+    start_time = time.time()
+    client = httpx.AsyncClient(timeout=10)
+
+  
+    async with trio.open_nursery() as nursery:
+        for m in mail:
+            nursery.start_soon(launch_check, m, client, final_mail)
+
+    await client.aclose()
     return (final_mail)
 
 def write_final(final_mail, combos_values):
@@ -148,7 +168,6 @@ def comboBirthPart(dob):
     return(combos)
 
 def createMailBirthday(base_mail, dob):
-    print(" === STARTING ITERATION ===")
     maildob = list()
     combos = list()
     dobstr = list()
@@ -189,7 +208,7 @@ def addProvider(base_mail, providers):
 
     return providermail
 
-if __name__ == "__main__":
+async def maincore():
     parser = OptionParser()
 
     parser.add_option("-s", "--simple", dest="simple", type="int",
@@ -246,10 +265,13 @@ if __name__ == "__main__":
     if combos_values[3] != "":
         probable_mail.append(combos_values[3])
 
-    final_mail = check_mail(probable_mail, final_mail)
-    if options.holehe != "":
+    final_mail = await check_mail(probable_mail, final_mail)
+    if options.holehe == "yes":
         for mail in final_mail:
             os.system(f'holehe --only-used {mail}')
 
 
     write_final(final_mail, combos_values)
+
+if __name__ == "__main__":
+    trio.run(maincore)
