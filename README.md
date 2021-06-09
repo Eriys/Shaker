@@ -19,5 +19,3 @@ Several options exists :
 Future features : 
 
 -> parallelizing
-
--> postcode
