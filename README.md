@@ -1,6 +1,6 @@
 # Shaker
 
-Shaker is a tools whose two principales functions :
+Shaker is a tools whose two principal functions :
 
 1. Generate mail with combination of name, firstname, pseudo, postcode and date of birth
 2. Check which mail exists on gmail or not.
