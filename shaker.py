@@ -115,7 +115,7 @@ def create_mail(base_mails, number):
     return (probable_mail)
 
 def check_mail(mail, final_mail):
-    for m in tdqm(mail):
+    for m in tqdm(mail):
         url = f'https://mail.google.com/mail/gxlu?email={m}'
         try:
             response = requests.get(url)
