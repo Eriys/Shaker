@@ -5,7 +5,7 @@ from optparse import OptionParser
 from datetime import datetime
 import itertools
 import os
-import tqdm
+from tqdm import tqdm
 
 def inputs(options):
     firstname = str(input("Target Firstname: "))
