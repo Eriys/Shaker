@@ -14,4 +14,8 @@ Several options exists :
 5. Holehe : Launch the holehe function in the terminal if the mail is valid. 
 
 
-Warning : For the moment, the program is not really fast, because I need to implement parallelizing features. So take a coffee (or two) if you're running a lot of providers at the same time. 
+**Warning** : For the moment, the program is not really fast, because I need to implement parallelizing features. So take a coffee (or two) if you're running a lot of providers at the same time. 
+
+Future features : 
+-> parallelizing
+-> postcode
