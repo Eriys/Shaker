@@ -2,15 +2,18 @@
 import httpx
 import trio
 
-import sys
+import sys, os, time
 from optparse import OptionParser
 from datetime import datetime
 import itertools
-import os
 
-import time
-from tqdm import tqdm
-
+def import_holehe():
+    #just check if dependencie holehe is here
+    try: 
+        import holehe
+        return True
+    except: 
+        return False
 
 def inputs(options):
     firstname = str(input("Target Firstname: "))
@@ -109,6 +112,17 @@ def simpleItermail(names):
     combis = list(set(filter(lambda x : len(x) > 4, combis)))
     combis = list(set(filter(lambda x : x[0] not in '-_.' and x[-1] not in '_-.', combis)))
     return (combis)
+
+def IterEndPseudo(pseudo):
+    # try permutation on the 3 last char of pseudo
+    if(len(pseudo) < 3):
+        print("cannot do pseudo end permutation with too short pseudo ({})".format(str(len(pseudo))))
+        raise Exception("Error on pseudo length")
+    pseudoend = pseudo[-3:]
+    pseudo = pseudo[:-3]
+    list_result = list(itertools.permutations(pseudoend)) # on crée toutes les permutations
+    list_result = [pseudo + ''.join(rez) for rez in list_result] # on ajoute le pseudo au début
+    return list_result
 
 def create_mail(base_mails, number):
     probable_mail = list()
@@ -213,7 +227,7 @@ async def maincore():
 
     parser.add_option("-s", "--simple", dest="simple", type="int",
                         help= """Search only simple combinations without number.\n Options:\n\n
-0 - only name + surname without separator, 1 - name + surname + separator,      2 - all combinaisons """)
+0 - only name + surname without separator, 1 - name + surname + separator, 2 Pseudo end permutation,     3 - all combinaisons """)
 
     parser.add_option("-o", "--occurence", dest="occurence", type="int",
                         help="Define the number of mail to search. Default : 2021")
@@ -237,6 +251,8 @@ async def maincore():
     elif options.simple == 1:
         base_mail = simpleItermail(combos_values[0])
         number = 0
+    elif options.simple == 2:
+        base_mail = IterEndPseudo(combos_values[0][2])
     else:
         base_mail = allItermail(combos_values[0])
 
@@ -267,8 +283,11 @@ async def maincore():
 
     final_mail = await check_mail(probable_mail, final_mail)
     if options.holehe == "yes":
-        for mail in final_mail:
-            os.system(f'holehe --only-used {mail}')
+        if(import_holehe()):
+            for mail in final_mail:
+                os.system(f'holehe --only-used {mail}')
+        else:
+            print("holehe not found, please install holehe dependencie (https://github.com/megadose/holehe)")
 
 
     write_final(final_mail, combos_values)
