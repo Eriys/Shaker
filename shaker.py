@@ -113,6 +113,17 @@ def simpleItermail(names):
     combis = list(set(filter(lambda x : x[0] not in '-_.' and x[-1] not in '_-.', combis)))
     return (combis)
 
+def IterEndPseudo(pseudo):
+    # try permutation on the 3 last char of pseudo
+    if(len(pseudo) < 3):
+        print("cannot do pseudo end permutation with too short pseudo ({})".format(str(len(pseudo))))
+        raise Exception("Error on pseudo length")
+    pseudoend = pseudo[-3:]
+    pseudo = pseudo[:-3]
+    list_result = list(itertools.permutations(pseudoend)) # on crée toutes les permutations
+    list_result = [pseudo + ''.join(rez) for rez in list_result] # on ajoute le pseudo au début
+    return list_result
+
 def create_mail(base_mails, number):
     probable_mail = list()
     for base in base_mails:
@@ -216,7 +227,7 @@ async def maincore():
 
     parser.add_option("-s", "--simple", dest="simple", type="int",
                         help= """Search only simple combinations without number.\n Options:\n\n
-0 - only name + surname without separator, 1 - name + surname + separator,      2 - all combinaisons """)
+0 - only name + surname without separator, 1 - name + surname + separator, 2 Pseudo end permutation,     3 - all combinaisons """)
 
     parser.add_option("-o", "--occurence", dest="occurence", type="int",
                         help="Define the number of mail to search. Default : 2021")
@@ -240,6 +251,8 @@ async def maincore():
     elif options.simple == 1:
         base_mail = simpleItermail(combos_values[0])
         number = 0
+    elif options.simple == 2:
+        base_mail = IterEndPseudo(combos_values[0][2])
     else:
         base_mail = allItermail(combos_values[0])
 
