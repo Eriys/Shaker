@@ -2,15 +2,10 @@
 import httpx
 import trio
 
-import sys
+import sys, os, time
 from optparse import OptionParser
 from datetime import datetime
 import itertools
-import os
-
-import time
-from tqdm import tqdm
-
 
 def inputs(options):
     firstname = str(input("Target Firstname: "))
