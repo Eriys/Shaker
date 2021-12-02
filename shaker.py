@@ -7,6 +7,14 @@ from optparse import OptionParser
 from datetime import datetime
 import itertools
 
+def import_holehe():
+    #just check if dependencie holehe is here
+    try: 
+        import holehe
+        return True
+    except: 
+        return False
+
 def inputs(options):
     firstname = str(input("Target Firstname: "))
     lastname = str(input("Target Last name: "))
@@ -262,8 +270,11 @@ async def maincore():
 
     final_mail = await check_mail(probable_mail, final_mail)
     if options.holehe == "yes":
-        for mail in final_mail:
-            os.system(f'holehe --only-used {mail}')
+        if(import_holehe()):
+            for mail in final_mail:
+                os.system(f'holehe --only-used {mail}')
+        else:
+            print("holehe not found, please install holehe dependencie (https://github.com/megadose/holehe)")
 
 
     write_final(final_mail, combos_values)
